@@ -1,8 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
+    public Text GameOverText;
+    public Text GameOverScoreText;
+    public GameObject GameOverPanel;
+    
 
 	private Tile[,] AllTiles = new Tile[4, 4];
 	private List<Tile[]> columns = new List<Tile[]> ();
@@ -33,6 +39,37 @@ public class GameManager : MonoBehaviour {
 		Generate ();
 	}
 
+    private void GameOver()
+    {
+        GameOverScoreText.text = ScoreTracker.Instance.Score.ToString();
+        GameOverPanel.SetActive(true);
+    }
+
+    bool CanMove()
+    {
+        if (EmptyTiles.Count > 0) return true;
+        else
+        {
+            //columns
+            for (int i = 0; i < columns.Count; i++)
+                for (int j = 0; j < rows.Count-1; j++)
+                    if (AllTiles[j, i].Number == AllTiles[j + 1, i].Number)
+                        return true;
+
+            //rows
+            for (int i = 0; i < rows.Count; i++)
+                for (int j = 0; j < columns.Count - 1; j++)
+                    if (AllTiles[i, j].Number == AllTiles[i, j+1].Number)
+                        return true;
+        }
+        return false;
+    }
+
+    public void NewGameButtonHandler()
+    {
+        Application.LoadLevel(Application.loadedLevel);
+    }
+
 	bool MakeOneMoveDownIndex(Tile[] LineOfTiles)
 	{
 		for (int i = 0; i < LineOfTiles.Length - 1; i++) 
@@ -52,6 +89,7 @@ public class GameManager : MonoBehaviour {
 				LineOfTiles [i].Number *= 2;
 				LineOfTiles [i + 1].Number = 0;
 				LineOfTiles [i].mergedThisTurn = true;
+			    ScoreTracker.Instance.Score += LineOfTiles[i].Number;
 				return true;
 			}
 		}
@@ -77,7 +115,8 @@ public class GameManager : MonoBehaviour {
 				LineOfTiles [i].Number *= 2;
 				LineOfTiles [i - 1].Number = 0;
 				LineOfTiles [i].mergedThisTurn = true;
-				return true;
+                ScoreTracker.Instance.Score += LineOfTiles[i].Number;
+                return true;
 			}
 		}
 		return false;
@@ -152,6 +191,8 @@ public class GameManager : MonoBehaviour {
 		{
 			UpdateEmptyTiles ();
 			Generate ();
-		}
+
+		    if (!CanMove()) GameOver();
+        }
     }
 }
