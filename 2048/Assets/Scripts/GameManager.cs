@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public Text GameOverText;
+    public GameObject YouWonText;
+    public GameObject GameOverText;
     public Text GameOverScoreText;
     public GameObject GameOverPanel;
     
@@ -39,6 +40,13 @@ public class GameManager : MonoBehaviour
 		Generate ();
 	}
 
+    private void YouWon()
+    {
+        GameOverText.SetActive(false);
+        YouWonText.SetActive(true);
+
+        GameOver();
+    }
     private void GameOver()
     {
         GameOverScoreText.text = ScoreTracker.Instance.Score.ToString();
@@ -90,6 +98,7 @@ public class GameManager : MonoBehaviour
 				LineOfTiles [i + 1].Number = 0;
 				LineOfTiles [i].mergedThisTurn = true;
 			    ScoreTracker.Instance.Score += LineOfTiles[i].Number;
+                if(LineOfTiles[i].Number == 2048) YouWon();
 				return true;
 			}
 		}
@@ -116,6 +125,7 @@ public class GameManager : MonoBehaviour
 				LineOfTiles [i - 1].Number = 0;
 				LineOfTiles [i].mergedThisTurn = true;
                 ScoreTracker.Instance.Score += LineOfTiles[i].Number;
+                if (LineOfTiles[i].Number == 2048) YouWon();
                 return true;
 			}
 		}
@@ -128,7 +138,7 @@ public class GameManager : MonoBehaviour
 		{
 			int indexForNewNumber = Random.Range (0, EmptyTiles.Count);
 
-			int randomNum = Random.Range (0, 5);//20%
+			int randomNum = Random.Range (0, 10);//10%
 			if(randomNum == 0 )EmptyTiles [indexForNewNumber].Number = 4;
 			else EmptyTiles [indexForNewNumber].Number = 2;
 
