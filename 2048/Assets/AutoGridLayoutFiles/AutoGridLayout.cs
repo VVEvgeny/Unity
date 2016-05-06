@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+
 [ExecuteInEditMode]
 [AddComponentMenu("Layout/Auto Grid Layout Group", 152)]
 public class AutoGridLayout : GridLayoutGroup
 {
-    [SerializeField]
-    private bool m_IsColumn;
-    [SerializeField]
-    private int m_Column = 1, m_Row = 1;
+    [SerializeField] private bool m_IsColumn;
+    [SerializeField] private int m_Column = 1, m_Row = 1;
+
     public override void CalculateLayoutInputHorizontal()
     {
         base.CalculateLayoutInputHorizontal();
@@ -21,7 +21,7 @@ public class AutoGridLayout : GridLayoutGroup
             {
                 iColumn = 1;
             }
-            iRow = Mathf.CeilToInt(this.transform.childCount / iColumn);
+            iRow = Mathf.CeilToInt(this.transform.childCount/iColumn);
         }
         else
         {
@@ -30,11 +30,11 @@ public class AutoGridLayout : GridLayoutGroup
             {
                 iRow = 1;
             }
-            iColumn = Mathf.CeilToInt(this.transform.childCount / iRow);
+            iColumn = Mathf.CeilToInt(this.transform.childCount/iRow);
         }
-        float fHeight = (rectTransform.rect.height - ((iRow - 1) * (spacing.y))) - ((padding.top + padding.bottom));
-        float fWidth = (rectTransform.rect.width - ((iColumn - 1) * (spacing.x))) - ( (padding.right + padding.left));
-        Vector2 vSize = new Vector2(fWidth / iColumn, (fHeight) / iRow);
+        float fHeight = (rectTransform.rect.height - ((iRow - 1)*(spacing.y))) - ((padding.top + padding.bottom));
+        float fWidth = (rectTransform.rect.width - ((iColumn - 1)*(spacing.x))) - ((padding.right + padding.left));
+        Vector2 vSize = new Vector2(fWidth/iColumn, (fHeight)/iRow);
         cellSize = vSize;
     }
 }

@@ -9,15 +9,15 @@ public class TileStyle
 	public Color32 TextColor;
 }
 
-public class TileStyleHolder : MonoBehaviour 
+public class TileStyleHolder : MonoBehaviour
 {
-	// SINGLETON
-	public static TileStyleHolder Instance;
+    // SINGLETON
+    public static TileStyleHolder Instance;
 
-	public TileStyle[] TileStyles;
-	
-	void Awake()
-	{
-		Instance = this;
-	}
+    public TileStyle[] TileStyles;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 }

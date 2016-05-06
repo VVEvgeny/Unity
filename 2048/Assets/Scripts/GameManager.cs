@@ -13,8 +13,7 @@ public enum GameStates
 public class GameManager : MonoBehaviour
 {
     public GameStates State;
-    [Range(0,2f)]
-    public float delay;
+    [Range(0, 2f)] public float delay;
     private bool moveMade;
     private bool[] lineMoveComplite = new bool[4] {true, true, true, true};
 
@@ -23,36 +22,36 @@ public class GameManager : MonoBehaviour
     public GameObject GameOverText;
     public Text GameOverScoreText;
     public GameObject GameOverPanel;
-    
 
-	private Tile[,] AllTiles = new Tile[4, 4];
-	private List<Tile[]> columns = new List<Tile[]> ();
-	private List<Tile[]> rows = new List<Tile[]> ();
-	private List<Tile> EmptyTiles = new List<Tile>();
 
-	// Use this for initialization
-	void Start () 
-	{
-		Tile[] AllTilesOneDim = GameObject.FindObjectsOfType<Tile> ();
-		foreach (Tile t in AllTilesOneDim) 
-		{
-			t.Number = 0;
-			AllTiles [t.indRow, t.indCol] = t;
-			EmptyTiles.Add (t);
-		}
-		columns.Add (new Tile[]{ AllTiles [0, 0], AllTiles [1, 0], AllTiles [2, 0], AllTiles [3, 0] });
-		columns.Add (new Tile[]{ AllTiles [0, 1], AllTiles [1, 1], AllTiles [2, 1], AllTiles [3, 1] });
-		columns.Add (new Tile[]{ AllTiles [0, 2], AllTiles [1, 2], AllTiles [2, 2], AllTiles [3, 2] });
-		columns.Add (new Tile[]{ AllTiles [0, 3], AllTiles [1, 3], AllTiles [2, 3], AllTiles [3, 3] });
+    private Tile[,] AllTiles = new Tile[4, 4];
+    private List<Tile[]> columns = new List<Tile[]>();
+    private List<Tile[]> rows = new List<Tile[]>();
+    private List<Tile> EmptyTiles = new List<Tile>();
 
-		rows.Add (new Tile[]{ AllTiles [0, 0], AllTiles [0, 1], AllTiles [0, 2], AllTiles [0, 3] });
-		rows.Add (new Tile[]{ AllTiles [1, 0], AllTiles [1, 1], AllTiles [1, 2], AllTiles [1, 3] });
-		rows.Add (new Tile[]{ AllTiles [2, 0], AllTiles [2, 1], AllTiles [2, 2], AllTiles [2, 3] });
-		rows.Add (new Tile[]{ AllTiles [3, 0], AllTiles [3, 1], AllTiles [3, 2], AllTiles [3, 3] });
+    // Use this for initialization
+    void Start()
+    {
+        Tile[] AllTilesOneDim = GameObject.FindObjectsOfType<Tile>();
+        foreach (Tile t in AllTilesOneDim)
+        {
+            t.Number = 0;
+            AllTiles[t.indRow, t.indCol] = t;
+            EmptyTiles.Add(t);
+        }
+        columns.Add(new Tile[] {AllTiles[0, 0], AllTiles[1, 0], AllTiles[2, 0], AllTiles[3, 0]});
+        columns.Add(new Tile[] {AllTiles[0, 1], AllTiles[1, 1], AllTiles[2, 1], AllTiles[3, 1]});
+        columns.Add(new Tile[] {AllTiles[0, 2], AllTiles[1, 2], AllTiles[2, 2], AllTiles[3, 2]});
+        columns.Add(new Tile[] {AllTiles[0, 3], AllTiles[1, 3], AllTiles[2, 3], AllTiles[3, 3]});
 
-		Generate ();
-		Generate ();
-	}
+        rows.Add(new Tile[] {AllTiles[0, 0], AllTiles[0, 1], AllTiles[0, 2], AllTiles[0, 3]});
+        rows.Add(new Tile[] {AllTiles[1, 0], AllTiles[1, 1], AllTiles[1, 2], AllTiles[1, 3]});
+        rows.Add(new Tile[] {AllTiles[2, 0], AllTiles[2, 1], AllTiles[2, 2], AllTiles[2, 3]});
+        rows.Add(new Tile[] {AllTiles[3, 0], AllTiles[3, 1], AllTiles[3, 2], AllTiles[3, 3]});
+
+        Generate();
+        Generate();
+    }
 
     private void YouWon()
     {
@@ -61,6 +60,7 @@ public class GameManager : MonoBehaviour
 
         GameOver();
     }
+
     private void GameOver()
     {
         State = GameStates.GameOver;
@@ -75,14 +75,14 @@ public class GameManager : MonoBehaviour
         {
             //columns
             for (int i = 0; i < columns.Count; i++)
-                for (int j = 0; j < rows.Count-1; j++)
+                for (int j = 0; j < rows.Count - 1; j++)
                     if (AllTiles[j, i].Number == AllTiles[j + 1, i].Number)
                         return true;
 
             //rows
             for (int i = 0; i < rows.Count; i++)
                 for (int j = 0; j < columns.Count - 1; j++)
-                    if (AllTiles[i, j].Number == AllTiles[i, j+1].Number)
+                    if (AllTiles[i, j].Number == AllTiles[i, j + 1].Number)
                         return true;
         }
         return false;
@@ -93,76 +93,80 @@ public class GameManager : MonoBehaviour
         Application.LoadLevel(Application.loadedLevel);
     }
 
-	bool MakeOneMoveDownIndex(Tile[] LineOfTiles)
-	{
-		for (int i = 0; i < LineOfTiles.Length - 1; i++) 
-		{
-			//MOVE BLOCK
-			if (LineOfTiles [i].Number == 0 && LineOfTiles[i+1].Number !=0) 
-			{
-				LineOfTiles [i].Number = LineOfTiles [i + 1].Number;
-				LineOfTiles [i + 1].Number = 0;
-				return true;
-			}
-			//MERGE BLOCK
-			if (LineOfTiles[i].Number != 0
-				&& LineOfTiles [i].Number == LineOfTiles [i + 1].Number
-				&& LineOfTiles [i].mergedThisTurn == false && LineOfTiles [i + 1].mergedThisTurn == false) 
-			{
-				LineOfTiles [i].Number *= 2;
-				LineOfTiles [i + 1].Number = 0;
-				LineOfTiles [i].mergedThisTurn = true;
-			    ScoreTracker.Instance.Score += LineOfTiles[i].Number;
-                if(LineOfTiles[i].Number == 2048) YouWon();
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool MakeOneMoveUpIndex(Tile[] LineOfTiles)
-	{
-		for (int i = LineOfTiles.Length - 1; i > 0 ; i--) 
-		{
-			//MOVE BLOCK
-			if (LineOfTiles [i].Number == 0 && LineOfTiles[i-1].Number !=0) 
-			{
-				LineOfTiles [i].Number = LineOfTiles [i - 1].Number;
-				LineOfTiles [i - 1].Number = 0;
-				return true;
-			}
-			//MERGE BLOCK
-			if (LineOfTiles[i].Number != 0
-				&& LineOfTiles [i].Number == LineOfTiles [i - 1] .Number
-				&& LineOfTiles [i].mergedThisTurn == false && LineOfTiles [i - 1].mergedThisTurn == false) 
-			{
-				LineOfTiles [i].Number *= 2;
-				LineOfTiles [i - 1].Number = 0;
-				LineOfTiles [i].mergedThisTurn = true;
+    bool MakeOneMoveDownIndex(Tile[] LineOfTiles)
+    {
+        for (int i = 0; i < LineOfTiles.Length - 1; i++)
+        {
+            //MOVE BLOCK
+            if (LineOfTiles[i].Number == 0 && LineOfTiles[i + 1].Number != 0)
+            {
+                LineOfTiles[i].Number = LineOfTiles[i + 1].Number;
+                LineOfTiles[i + 1].Number = 0;
+                return true;
+            }
+            //MERGE BLOCK
+            if (LineOfTiles[i].Number != 0
+                && LineOfTiles[i].Number == LineOfTiles[i + 1].Number
+                && LineOfTiles[i].mergedThisTurn == false && LineOfTiles[i + 1].mergedThisTurn == false)
+            {
+                LineOfTiles[i].Number *= 2;
+                LineOfTiles[i + 1].Number = 0;
+                LineOfTiles[i].mergedThisTurn = true;
+                LineOfTiles[i].PlayMergedAnimation();
                 ScoreTracker.Instance.Score += LineOfTiles[i].Number;
                 if (LineOfTiles[i].Number == 2048) YouWon();
                 return true;
-			}
-		}
-		return false;
-	}
+            }
+        }
+        return false;
+    }
 
-	void Generate()
-	{
-		if (EmptyTiles.Count > 0) 
-		{
-			int indexForNewNumber = Random.Range (0, EmptyTiles.Count);
+    bool MakeOneMoveUpIndex(Tile[] LineOfTiles)
+    {
+        for (int i = LineOfTiles.Length - 1; i > 0; i--)
+        {
+            //MOVE BLOCK
+            if (LineOfTiles[i].Number == 0 && LineOfTiles[i - 1].Number != 0)
+            {
+                LineOfTiles[i].Number = LineOfTiles[i - 1].Number;
+                LineOfTiles[i - 1].Number = 0;
+                return true;
+            }
+            //MERGE BLOCK
+            if (LineOfTiles[i].Number != 0
+                && LineOfTiles[i].Number == LineOfTiles[i - 1].Number
+                && LineOfTiles[i].mergedThisTurn == false && LineOfTiles[i - 1].mergedThisTurn == false)
+            {
+                LineOfTiles[i].Number *= 2;
+                LineOfTiles[i - 1].Number = 0;
+                LineOfTiles[i].mergedThisTurn = true;
+                LineOfTiles[i].PlayMergedAnimation();
+                ScoreTracker.Instance.Score += LineOfTiles[i].Number;
+                if (LineOfTiles[i].Number == 2048) YouWon();
+                return true;
+            }
+        }
+        return false;
+    }
 
-			int randomNum = Random.Range (0, 10);//10%
-			if(randomNum == 0 )EmptyTiles [indexForNewNumber].Number = 4;
-			else EmptyTiles [indexForNewNumber].Number = 2;
+    void Generate()
+    {
+        if (EmptyTiles.Count > 0)
+        {
+            int indexForNewNumber = Random.Range(0, EmptyTiles.Count);
 
-			EmptyTiles.RemoveAt (indexForNewNumber);
-		}
-	}
-	
-	// Update is called once per frame
-	/*
+            int randomNum = Random.Range(0, 10); //10%
+            if (randomNum == 0) EmptyTiles[indexForNewNumber].Number = 4;
+            else EmptyTiles[indexForNewNumber].Number = 2;
+
+            EmptyTiles[indexForNewNumber].PlayAppearAnimation();
+
+            EmptyTiles.RemoveAt(indexForNewNumber);
+        }
+    }
+
+    // Update is called once per frame
+    /*
 	void Update () 
     {
 		if (Input.GetKeyDown (KeyCode.G))
@@ -170,21 +174,21 @@ public class GameManager : MonoBehaviour
 	}
 	*/
 
-	private void ResetMergedFlags()
-	{
-		foreach (Tile t in AllTiles)
-			t.mergedThisTurn = false;
-	}
+    private void ResetMergedFlags()
+    {
+        foreach (Tile t in AllTiles)
+            t.mergedThisTurn = false;
+    }
 
-	private void UpdateEmptyTiles()
-	{
-		EmptyTiles.Clear ();
-		foreach (Tile t in AllTiles) 
-		{
-			if (t.Number == 0)
-				EmptyTiles.Add (t);
-		}
-	}
+    private void UpdateEmptyTiles()
+    {
+        EmptyTiles.Clear();
+        foreach (Tile t in AllTiles)
+        {
+            if (t.Number == 0)
+                EmptyTiles.Add(t);
+        }
+    }
 
     IEnumerator MoveOneLineUpIndexCoroutine(Tile[] line, int index)
     {
@@ -214,7 +218,7 @@ public class GameManager : MonoBehaviour
 
         switch (md)
         {
-                case MoveDirection.Down:
+            case MoveDirection.Down:
                 for (int i = 0; i < columns.Count; i++)
                     StartCoroutine(MoveOneLineUpIndexCoroutine(columns[i], i));
                 break;
@@ -241,17 +245,18 @@ public class GameManager : MonoBehaviour
             Generate();
 
             if (!CanMove()) GameOver();
-            else State = GameStates.Playing;
         }
-        else State = GameStates.Playing;
+        State = GameStates.Playing;
+
+        StopAllCoroutines();
     }
 
     public void Move(MoveDirection md)
     {
         //Debug.Log(md.ToString() + " move.");
-		moveMade = false;
+        moveMade = false;
 
-		ResetMergedFlags ();
+        ResetMergedFlags();
 
         if (delay > 0) StartCoroutine(MoveCoroutine(md));
         else

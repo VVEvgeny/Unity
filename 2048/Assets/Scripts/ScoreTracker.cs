@@ -34,5 +34,4 @@ public class ScoreTracker : MonoBehaviour
         ScoreText.text = "0";
         HighScoreText.text = PlayerPrefs.GetInt("HighScore").ToString();
     }
-
 }
