@@ -4,23 +4,25 @@ using UnityEngine.UI;
 
 public class ScoreTracker : MonoBehaviour
 {
-    private int score;
+    private string PrefHighScoreString = "HighScore";
+    private int _score;
+
     public static ScoreTracker Instance;
     public Text ScoreText;
     public Text HighScoreText;
 
     public int Score
     {
-        get { return score; }
+        get { return _score; }
         set
         {
-            score = value;
-            ScoreText.text = score.ToString();
+            _score = value;
+            ScoreText.text = _score.ToString();
 
-            if (PlayerPrefs.GetInt("HighScore") < score)
+            if (PlayerPrefs.GetInt(PrefHighScoreString) < _score)
             {
-                PlayerPrefs.SetInt("HighScore", score);
-                HighScoreText.text = score.ToString();
+                PlayerPrefs.SetInt(PrefHighScoreString, _score);
+                HighScoreText.text = _score.ToString();
             }
         }
     }
@@ -29,9 +31,9 @@ public class ScoreTracker : MonoBehaviour
     {
         Instance = this;
 
-        if (!PlayerPrefs.HasKey("HighScore")) PlayerPrefs.SetInt("HighScore", 0);
+        if (!PlayerPrefs.HasKey(PrefHighScoreString)) PlayerPrefs.SetInt(PrefHighScoreString, 0);
 
         ScoreText.text = "0";
-        HighScoreText.text = PlayerPrefs.GetInt("HighScore").ToString();
+        HighScoreText.text = PlayerPrefs.GetInt(PrefHighScoreString).ToString();
     }
 }

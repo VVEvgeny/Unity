@@ -5,67 +5,67 @@ using UnityEngine.UI;
 public class Tile : MonoBehaviour
 {
 
-    public bool mergedThisTurn = false;
+    public bool MergedThisTurn = false;
 
     public int indRow;
     public int indCol;
 
     public int Number
     {
-        get { return number; }
+        get { return _number; }
         set
         {
-            number = value;
-            if (number == 0)
+            _number = value;
+            if (_number == 0)
                 SetEmpty();
             else
             {
-                ApplyStyle(number);
+                ApplyStyle(_number);
                 SetVisible();
             }
         }
     }
 
-    private int number;
+    private int _number;
 
-    private Text TileText;
-    private Image TileImage;
-    private Animator anim;
+    private Text _tileText;
+    private Image _tileImage;
+    private Animator _anim;
 
     void Awake()
     {
-        anim = GetComponent<Animator>();
-        TileText = GetComponentInChildren<Text>();
-        TileImage = transform.Find("NumberedCell").GetComponent<Image>();
+        _anim = GetComponent<Animator>();
+        _tileText = GetComponentInChildren<Text>();
+        _tileImage = transform.Find("NumberedCell").GetComponent<Image>();
     }
 
     public void PlayMergedAnimation()
     {
-        anim.SetTrigger("Merge");
+        _anim.SetTrigger("Merge");
     }
 
     public void PlayAppearAnimation()
     {
-        anim.SetTrigger("Appear");
+        _anim.SetTrigger("Appear");
     }
 
     void ApplyStyleFromHolder(int index)
     {
-        TileText.text = TileStyleHolder.Instance.TileStyles[index].Number.ToString();
-        TileText.color = TileStyleHolder.Instance.TileStyles[index].TextColor;
-        TileImage.color = TileStyleHolder.Instance.TileStyles[index].TileColor;
+        _tileText.text = TileStyleHolder.Instance.TileStyles[index].Number.ToString();
+        _tileText.color = TileStyleHolder.Instance.TileStyles[index].TextColor;
+        _tileImage.color = TileStyleHolder.Instance.TileStyles[index].TileColor;
     }
 
     int CalcIndex(int num)
     {
-        int count = 0;
-        int calcNum = num;
+        var count = 0;
+        var calcNum = num;
         for (; calcNum >= 2;)
         {
             calcNum = calcNum/2;
             count++;
         }
-        if ((count - 1) < 0 || (count - 1) > 11)
+        if (count - 1 < 0 || count - 1 > 11)
         {
             Debug.LogError("Error Num=" + num);
             return 0;
@@ -80,25 +80,13 @@ public class Tile : MonoBehaviour
 
     private void SetVisible()
     {
-        TileImage.enabled = true;
-        TileText.enabled = true;
+        _tileImage.enabled = true;
+        _tileText.enabled = true;
     }
 
     private void SetEmpty()
     {
-        TileImage.enabled = false;
-        TileText.enabled = false;
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        _tileImage.enabled = false;
+        _tileText.enabled = false;
     }
 }

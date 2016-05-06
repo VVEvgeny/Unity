@@ -1,26 +1,25 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class TouchInputManager : MonoBehaviour
 {
-    private float fingerStartTime = 0.0f;
-    private Vector2 fingerStartPos = Vector2.zero;
+    private float _fingerStartTime = 0.0f;
+    private Vector2 _fingerStartPos = Vector2.zero;
 
-    private bool isSwipe = false;
+    private bool _isSwipe = false;
     private float minSwipeDist = 50.0f;
     private float maxSwipeTime = 0.5f;
 
-    private GameManager gm;
+    private GameManager _gm;
 
     void Awake()
     {
-        gm = GameObject.FindObjectOfType<GameManager>();
+        _gm = FindObjectOfType<GameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gm.State == GameStates.Playing && Input.touchCount > 0)
+        if (_gm.State == GameStates.Playing && Input.touchCount > 0)
         {
             foreach (Touch touch in Input.touches)
             {
@@ -28,25 +27,25 @@ public class TouchInputManager : MonoBehaviour
                 {
                     case TouchPhase.Began:
                         /* this is a new touch */
-                        isSwipe = true;
-                        fingerStartTime = Time.time;
-                        fingerStartPos = touch.position;
+                        _isSwipe = true;
+                        _fingerStartTime = Time.time;
+                        _fingerStartPos = touch.position;
                         break;
 
                     case TouchPhase.Canceled:
                         /* The touch is being canceled */
-                        isSwipe = false;
+                        _isSwipe = false;
                         break;
 
                     case TouchPhase.Ended:
 
-                        float gestureTime = Time.time - fingerStartTime;
-                        float gestureDist = (touch.position - fingerStartPos).magnitude;
+                        var gestureTime = Time.time - _fingerStartTime;
+                        var gestureDist = (touch.position - _fingerStartPos).magnitude;
 
-                        if (isSwipe && gestureTime < maxSwipeTime && gestureDist > minSwipeDist)
+                        if (_isSwipe && gestureTime < maxSwipeTime && gestureDist > minSwipeDist)
                         {
-                            Vector2 direction = touch.position - fingerStartPos;
-                            Vector2 swipeType = Vector2.zero;
+                            var direction = touch.position - _fingerStartPos;
+                            var swipeType = Vector2.zero;
 
                             if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
                             {
@@ -64,12 +63,12 @@ public class TouchInputManager : MonoBehaviour
                                 if (swipeType.x > 0.0f)
                                 {
                                     // MOVE RIGHT
-                                    gm.Move(MoveDirection.Right);
+                                    _gm.Move(MoveDirection.Right);
                                 }
                                 else
                                 {
                                     // MOVE LEFT
-                                    gm.Move(MoveDirection.Left);
+                                    _gm.Move(MoveDirection.Left);
                                 }
                             }
 
@@ -78,12 +77,12 @@ public class TouchInputManager : MonoBehaviour
                                 if (swipeType.y > 0.0f)
                                 {
                                     // MOVE UP
-                                    gm.Move(MoveDirection.Up);
+                                    _gm.Move(MoveDirection.Up);
                                 }
                                 else
                                 {
                                     // MOVE DOWN
-                                    gm.Move(MoveDirection.Down);
+                                    _gm.Move(MoveDirection.Down);
                                 }
                             }
 
