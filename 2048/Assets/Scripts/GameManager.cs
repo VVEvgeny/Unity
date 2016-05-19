@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public enum GameStates
 {
@@ -13,15 +15,30 @@ public enum GameStates
 public class GameManager : MonoBehaviour
 {
     public GameStates State;
-    [Range(0, 2f)] public float delay;
+    [Range(0, 2f)]
+    public float delay;
     private bool _moveMade;
     private bool[] _lineMoveComplite = new bool[4] {true, true, true, true};
-
-
     public GameObject YouWonText;
     public GameObject GameOverText;
     public Text GameOverScoreText;
     public GameObject GameOverPanel;
+    public GameObject GameStartPanel;
+    public GameObject MainPanel;
+    public GameObject HelpPanel;
+    public Text TitleText;
+
+    public void WorkHelpPanel(bool open)
+    {
+        GameStartPanel.SetActive(!open);
+        HelpPanel.SetActive(open);
+    }
+    public void WorkGameOverPanel(bool open)
+    {
+        GameStartPanel.SetActive(!open);
+        MainPanel.SetActive(open);
+        GameOverPanel.SetActive(open);
+    }
 
 
     private Tile[,] _allTiles = new Tile[4, 4];
@@ -29,10 +46,30 @@ public class GameManager : MonoBehaviour
     private List<Tile[]> _rows = new List<Tile[]>();
     private List<Tile> _emptyTiles = new List<Tile>();
 
+    private int _scoreToWin;
+    private int ScoreToWin
+    {
+        get { return _scoreToWin; }
+        set
+        {
+            if (value == 16384)
+            {
+                _scoreToWin = 10005000;
+                TitleText.text = "Unlim";
+            }
+            else
+            {
+                _scoreToWin = value;
+                TitleText.text = _scoreToWin.ToString();
+            }
+        }
+    }
+
     // Use this for initialization
-    void Start()
+    void StartGame()
     {
         var allTilesOneDim = GameObject.FindObjectsOfType<Tile>();
+
         foreach (var t in allTilesOneDim)
         {
             t.Number = 0;
@@ -65,7 +102,7 @@ public class GameManager : MonoBehaviour
     {
         State = GameStates.GameOver;
         GameOverScoreText.text = ScoreTracker.Instance.Score.ToString();
-        GameOverPanel.SetActive(true);
+        WorkGameOverPanel(true);
     }
 
     bool CanMove()
@@ -85,10 +122,21 @@ public class GameManager : MonoBehaviour
 
         return false;
     }
-
-    public void NewGameButtonHandler()
+    
+    public void NewGameButtonHandler(int scoreToWin)
     {
-        Application.LoadLevel(Application.loadedLevel);
+        State = GameStates.Playing;
+        ScoreToWin = scoreToWin;
+        GameStartPanel.SetActive(false);
+        MainPanel.SetActive(true);
+        StartGame();
+        //Application.LoadLevel(Application.loadedLevel);
+    }
+    public void ContinueGameButtonHandler()
+    {
+        State = GameStates.Playing;
+        ScoreToWin = ScoreToWin * 2;
+        GameOverPanel.SetActive(false);
     }
 
     bool MakeOneMoveDownIndex(IList<Tile> lineOfTiles)
@@ -112,7 +160,7 @@ public class GameManager : MonoBehaviour
                 lineOfTiles[i].MergedThisTurn = true;
                 lineOfTiles[i].PlayMergedAnimation();
                 ScoreTracker.Instance.Score += lineOfTiles[i].Number;
-                if (lineOfTiles[i].Number == 2048) YouWon();
+                if (lineOfTiles[i].Number == ScoreToWin) YouWon();
                 return true;
             }
         }
@@ -140,7 +188,7 @@ public class GameManager : MonoBehaviour
                 lineOfTiles[i].MergedThisTurn = true;
                 lineOfTiles[i].PlayMergedAnimation();
                 ScoreTracker.Instance.Score += lineOfTiles[i].Number;
-                if (lineOfTiles[i].Number == 2048) YouWon();
+                if (lineOfTiles[i].Number == ScoreToWin) YouWon();
                 return true;
             }
         }
@@ -155,7 +203,8 @@ public class GameManager : MonoBehaviour
 
             var randomNum = Random.Range(0, 10); //10%
 
-            _emptyTiles[indexForNewNumber].Number = randomNum == 0 ? 4 : 2;
+            //_emptyTiles[indexForNewNumber].Number = randomNum == 0 ? 4 : 2;
+            _emptyTiles[indexForNewNumber].Number = 512;
 
             _emptyTiles[indexForNewNumber].PlayAppearAnimation();
 

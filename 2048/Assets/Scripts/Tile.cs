@@ -42,6 +42,8 @@ public class Tile : MonoBehaviour
     public void PlayMergedAnimation()
     {
         _anim.SetTrigger("Merge");
+
+
     }
 
     public void PlayAppearAnimation()
@@ -65,7 +67,7 @@ public class Tile : MonoBehaviour
             calcNum = calcNum/2;
             count++;
         }
-        if (count - 1 < 0 || count - 1 > 11)
+        if (count - 1 < 0 || count - 1 > 15)
         {
             Debug.LogError("Error Num=" + num);
             return 0;
