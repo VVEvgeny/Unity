@@ -2,26 +2,26 @@
 
 public class TouchInputManager : MonoBehaviour
 {
-    private float _fingerStartTime = 0.0f;
     private Vector2 _fingerStartPos = Vector2.zero;
-
-    private bool _isSwipe = false;
-    private float minSwipeDist = 50.0f;
-    private float maxSwipeTime = 0.5f;
+    private float _fingerStartTime;
 
     private GameManager _gm;
 
-    void Awake()
+    private bool _isSwipe;
+    private readonly float maxSwipeTime = 0.5f;
+    private readonly float minSwipeDist = 50.0f;
+
+    private void Awake()
     {
         _gm = FindObjectOfType<GameManager>();
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (_gm.State == GameStates.Playing && Input.touchCount > 0)
         {
-            foreach (Touch touch in Input.touches)
+            foreach (var touch in Input.touches)
             {
                 switch (touch.phase)
                 {
@@ -85,7 +85,6 @@ public class TouchInputManager : MonoBehaviour
                                     _gm.Move(MoveDirection.Down);
                                 }
                             }
-
                         }
                         break;
                 }

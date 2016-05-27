@@ -1,22 +1,21 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class TileStyle
 {
-	public int Number;
-	public Color32 TileColor;
-	public Color32 TextColor;
+    public int Number;
+    public Color32 TextColor;
+    public Color32 TileColor;
 }
 
 public class TileStyleHolder : MonoBehaviour
 {
+    public TileStyle[] TileStyles;
     // SINGLETON
     public static TileStyleHolder Instance;
 
-    public TileStyle[] TileStyles;
-
-    void Awake()
+    private void Awake()
     {
         Instance = this;
     }

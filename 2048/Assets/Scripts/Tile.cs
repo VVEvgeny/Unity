@@ -1,14 +1,19 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
 {
+    private Animator _anim;
 
-    public bool MergedThisTurn = false;
+    private int _number;
+    private Image _tileImage;
+
+    private Text _tileText;
+    public int indCol;
 
     public int indRow;
-    public int indCol;
+
+    public bool MergedThisTurn = false;
 
     public int Number
     {
@@ -26,13 +31,7 @@ public class Tile : MonoBehaviour
         }
     }
 
-    private int _number;
-
-    private Text _tileText;
-    private Image _tileImage;
-    private Animator _anim;
-
-    void Awake()
+    private void Awake()
     {
         _anim = GetComponent<Animator>();
         _tileText = GetComponentInChildren<Text>();
@@ -42,8 +41,6 @@ public class Tile : MonoBehaviour
     public void PlayMergedAnimation()
     {
         _anim.SetTrigger("Merge");
-
-
     }
 
     public void PlayAppearAnimation()
@@ -51,14 +48,14 @@ public class Tile : MonoBehaviour
         _anim.SetTrigger("Appear");
     }
 
-    void ApplyStyleFromHolder(int index)
+    private void ApplyStyleFromHolder(int index)
     {
         _tileText.text = TileStyleHolder.Instance.TileStyles[index].Number.ToString();
         _tileText.color = TileStyleHolder.Instance.TileStyles[index].TextColor;
         _tileImage.color = TileStyleHolder.Instance.TileStyles[index].TileColor;
     }
 
-    int CalcIndex(int num)
+    private int CalcIndex(int num)
     {
         var count = 0;
         var calcNum = num;
@@ -69,13 +66,13 @@ public class Tile : MonoBehaviour
         }
         if (count - 1 < 0 || count - 1 > 15)
         {
-            Debug.LogError("Error Num=" + num);
+            //Debug.LogError("Error Num=" + num);
             return 0;
         }
         return count - 1;
     }
 
-    void ApplyStyle(int num)
+    private void ApplyStyle(int num)
     {
         ApplyStyleFromHolder(CalcIndex(num));
     }
