@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using SmartLocalization;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -43,8 +44,6 @@ public class GameManager : MonoBehaviour
 
     private int BackCount = 5;
 
-
-    private Lang LMan;
     public Text GameStartPanelStatisticsText;
     public Text GameStartPanelUnlimText;
     public Text GameStartPanelSettingsText;
@@ -56,6 +55,7 @@ public class GameManager : MonoBehaviour
     public Text GameOverPanelYouWonText;
     public Text GameOverPanelToMainMenuText;
     public Text GameOverPanelContinueText;
+    public GameObject GameOverPanelContinueButton;
 
     public Text HelpPanelHelpText;
     public Text HelpPanelBugText;
@@ -91,52 +91,57 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        LMan = new Lang(Path.Combine(Application.dataPath, "lang.xml"), Application.systemLanguage.ToString(), false);
-        //LMan = new Lang(Path.Combine(Application.dataPath, "lang.xml"), "English", false);
+        if (Application.systemLanguage == SystemLanguage.Russian) LanguageManager.Instance.ChangeLanguage("ru");
 
-        GameStartPanelStatisticsText.text = LMan.getString("statistics");
-        GameStartPanelUnlimText.text = LMan.getString("unlim");
-        GameStartPanelSettingsText.text = LMan.getString("settings");
+        if (string.IsNullOrEmpty(LanguageManager.Instance.GetTextValue("statistics")))
+            LanguageManager.Instance.ChangeLanguage("en");
 
-        MainPanelScoreText.text = LMan.getString("score");
-        MainPanelBackText.text = LMan.getString("back");
+        if (!string.IsNullOrEmpty(LanguageManager.Instance.GetTextValue("statistics")))
+        {
+            GameStartPanelStatisticsText.text = LanguageManager.Instance.GetTextValue("statistics");
+            GameStartPanelUnlimText.text = LanguageManager.Instance.GetTextValue("unlim");
+            GameStartPanelSettingsText.text = LanguageManager.Instance.GetTextValue("settings");
 
-        GameOverPanelGameOverText.text = LMan.getString("gameOver");
-        GameOverPanelYouWonText.text = LMan.getString("youWon");
-        GameOverPanelToMainMenuText.text = LMan.getString("toMainMenu");
-        GameOverPanelContinueText.text = LMan.getString("continue");
+            MainPanelScoreText.text = LanguageManager.Instance.GetTextValue("score");
+            MainPanelBackText.text = LanguageManager.Instance.GetTextValue("back");
 
-        HelpPanelHelpText.text = LMan.getString("helpText");
-        HelpPanelBugText.text = LMan.getString("bugText");
-        HelpPanelCloseText.text = LMan.getString("close");
+            GameOverPanelGameOverText.text = LanguageManager.Instance.GetTextValue("gameOver");
+            GameOverPanelYouWonText.text = LanguageManager.Instance.GetTextValue("youWon");
+            GameOverPanelToMainMenuText.text = LanguageManager.Instance.GetTextValue("toMainMenu");
+            GameOverPanelContinueText.text = LanguageManager.Instance.GetTextValue("continue");
 
-        SettingsPanelCloseText.text = LMan.getString("close");
-        SettingsPanelEnableAnimationText.text = LMan.getString("enableAnimation");
-        SettingsPanelMoveSpeedText.text = LMan.getString("moveSepeed");
-        SettingsPanelResetText.text = LMan.getString("reset");
+            HelpPanelHelpText.text = LanguageManager.Instance.GetTextValue("helpText");
+            HelpPanelBugText.text = LanguageManager.Instance.GetTextValue("bugText");
+            HelpPanelCloseText.text = LanguageManager.Instance.GetTextValue("close");
 
-        StatisticsPanelAllStatsText.text = LMan.getString("allStats");
-        StatisticsPanelAllStatsGamesText.text = LMan.getString("games");
-        StatisticsPanelAllStatsWinsText.text = LMan.getString("wins");
+            SettingsPanelCloseText.text = LanguageManager.Instance.GetTextValue("close");
+            SettingsPanelEnableAnimationText.text = LanguageManager.Instance.GetTextValue("enableAnimation");
+            SettingsPanelMoveSpeedText.text = LanguageManager.Instance.GetTextValue("moveSepeed");
+            SettingsPanelResetText.text = LanguageManager.Instance.GetTextValue("reset");
 
-        StatisticsPanel2048StatsHighScoreText.text = LMan.getString("highScore");
-        StatisticsPanel2048StatsGamesText.text = LMan.getString("games");
-        StatisticsPanel2048StatsWinsText.text = LMan.getString("wins");
+            StatisticsPanelAllStatsText.text = LanguageManager.Instance.GetTextValue("allStats");
+            StatisticsPanelAllStatsGamesText.text = LanguageManager.Instance.GetTextValue("games");
+            StatisticsPanelAllStatsWinsText.text = LanguageManager.Instance.GetTextValue("wins");
 
-        StatisticsPanel4096StatsHighScoreText.text = LMan.getString("highScore");
-        StatisticsPanel4096StatsGamesText.text = LMan.getString("games");
-        StatisticsPanel4096StatsWinsText.text = LMan.getString("wins");
+            StatisticsPanel2048StatsHighScoreText.text = LanguageManager.Instance.GetTextValue("highScore");
+            StatisticsPanel2048StatsGamesText.text = LanguageManager.Instance.GetTextValue("games");
+            StatisticsPanel2048StatsWinsText.text = LanguageManager.Instance.GetTextValue("wins");
 
-        StatisticsPanel8192StatsHighScoreText.text = LMan.getString("highScore");
-        StatisticsPanel8192StatsGamesText.text = LMan.getString("games");
-        StatisticsPanel8192StatsWinsText.text = LMan.getString("wins");
+            StatisticsPanel4096StatsHighScoreText.text = LanguageManager.Instance.GetTextValue("highScore");
+            StatisticsPanel4096StatsGamesText.text = LanguageManager.Instance.GetTextValue("games");
+            StatisticsPanel4096StatsWinsText.text = LanguageManager.Instance.GetTextValue("wins");
 
-        StatisticsPanelUnlimStatsText.text = LMan.getString("unlim");
-        StatisticsPanelUnlimStatsHighScoreText.text = LMan.getString("highScore");
-        StatisticsPanelUnlimStatsGamesText.text = LMan.getString("games");
-        StatisticsPanelUnlimStatsWinsText.text = LMan.getString("wins");
+            StatisticsPanel8192StatsHighScoreText.text = LanguageManager.Instance.GetTextValue("highScore");
+            StatisticsPanel8192StatsGamesText.text = LanguageManager.Instance.GetTextValue("games");
+            StatisticsPanel8192StatsWinsText.text = LanguageManager.Instance.GetTextValue("wins");
 
-        StatisticsPanelCloseText.text = LMan.getString("close");
+            StatisticsPanelUnlimStatsText.text = LanguageManager.Instance.GetTextValue("unlim");
+            StatisticsPanelUnlimStatsHighScoreText.text = LanguageManager.Instance.GetTextValue("highScore");
+            StatisticsPanelUnlimStatsGamesText.text = LanguageManager.Instance.GetTextValue("games");
+            StatisticsPanelUnlimStatsWinsText.text = LanguageManager.Instance.GetTextValue("wins");
+
+            StatisticsPanelCloseText.text = LanguageManager.Instance.GetTextValue("close");
+        }
     }
 
     public bool IsMainMenu
@@ -151,7 +156,7 @@ public class GameManager : MonoBehaviour
             if (value == 16384)
             {
                 _scoreToWin = 10005000;
-                TitleText.text = "Unlim";
+                TitleText.text = LanguageManager.Instance.GetTextValue("unlim");
             }
             else
             {
@@ -249,6 +254,8 @@ public class GameManager : MonoBehaviour
 
     private void GameOver(bool isWin = false)
     {
+        GameOverPanelContinueButton.SetActive(BackCount > 0);
+
         State = GameStates.GameOver;
         GameOverScoreText.text = ScoreTracker.Instance.Score.ToString();
         WorkGameOverPanel(true, isWin);
