@@ -64,13 +64,20 @@ namespace Assets.Scripts
 
     public static class GMapManager
     {
+        public static Texture2D BaseTexture;
         private const string Url = "http://maps.googleapis.com/maps/api/staticmap";
-        private static readonly GoogleMapLocation CenterLocation = new GoogleMapLocation { Address = "Minsk" };
+        private static readonly GoogleMapLocation CenterLocation = new GoogleMapLocation
+        {
+            //Address = "Minsk"
+            Latitude = 53.9043137f,
+            Longitude = 27.555458f
+        };
+
         //public static bool DoubleResolution = false;
         private static readonly MapType MapType = MapType.RoadMap;
         //public static List<GoogleMapMarker> Markers = new List<GoogleMapMarker>();
         public const int Size = 512;
-        private const int Zoom = 11;
+        public static int Zoom = 11;
 
         public static string GetUrl(GoogleMapPath path)
         {

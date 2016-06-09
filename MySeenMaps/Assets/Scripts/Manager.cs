@@ -6,6 +6,7 @@ using Assets.Scripts;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
+// ReSharper disable UnusedMember.Global
 
 // ReSharper disable once CheckNamespace
 // ReSharper disable once UnusedMember.Global
@@ -29,8 +30,10 @@ public class Manager : MonoBehaviour
     // ReSharper disable once UnassignedField.Global
     // ReSharper disable once MemberCanBePrivate.Global
     public Text RoadsCountText;
+    // ReSharper disable once UnassignedField.Global
+    // ReSharper disable once MemberCanBePrivate.Global
+    public Dropdown RoadTypeDropdown;
 
-    private Texture2D _baseTexture;
     private RemoteManager _remoteManager;
 
     // ReSharper disable once UnusedMember.Local
@@ -69,22 +72,35 @@ public class Manager : MonoBehaviour
         StartCoroutine(ShowOnMapCoroutine());
     }
 
+    // ReSharper disable once UnusedMember.Global
+    public void ChangeRoadType()
+    {
+        RoadsCountText.text = UserPref.Roads.Count(r => r.Type == RoadTypeDropdown.value).ToString();
+    }
+
     private IEnumerator ShowOnMapCoroutine()
     {
-        var worked = false;
-        StartCoroutine(Process(UserPref.Roads.Select(road => road.Coordinates).ToList(), x => worked = x));
-        while (!worked) yield return null;
+        if (UserPref.Roads.Count(r => r.Type == RoadTypeDropdown.value || RoadTypeDropdown.value == 0) > 0)
+        {
+            var worked = false;
+            StartCoroutine(
+                Process(
+                    UserPref.Roads.Where(r => r.Type == RoadTypeDropdown.value || RoadTypeDropdown.value == 0)
+                        .Select(r => r.Coordinates)
+                        .ToList(), x => worked = x));
+            while (!worked) yield return null;
+        }
     }
 
     private IEnumerator Process(IList<string> paths, Action<bool> worked)
     {
-        if (_baseTexture == null)
+        if (GMapManager.BaseTexture == null)
         {
-            StartCoroutine(GetImage(null, 0, x => _baseTexture = x.Texture));
-            while (_baseTexture == null) yield return null;
+            StartCoroutine(GetImage(null, 0, x => GMapManager.BaseTexture = x.Texture));
+            while (GMapManager.BaseTexture == null) yield return null;
         }
 
-        var outTexture = _baseTexture;
+        var outTexture = Instantiate(GMapManager.BaseTexture);
         var points = new List<Point>();
 
         if (paths != null)
@@ -107,7 +123,7 @@ public class Manager : MonoBehaviour
                 {
                     for (var h = 0; h <= GMapManager.Size; h++)
                     {
-                        if (_baseTexture.GetPixel(w, h) != pathTextures[i].GetPixel(w, h))
+                        if (GMapManager.BaseTexture.GetPixel(w, h) != pathTextures[i].GetPixel(w, h))
                         {
                             //if (points.Count < 10000)
                             if (!points.Contains(new Point {X = w, Y = h})) points.Add(new Point {X = w, Y = h});
@@ -120,14 +136,19 @@ public class Manager : MonoBehaviour
         foreach (var p in points) outTexture.SetPixel(p.X, p.Y, Color.red);
         outTexture.Apply();
 
-        var spr = Sprite.Create(outTexture, new Rect(0, 0, GMapManager.Size, GMapManager.Size), new Vector2(GMapManager.Size, GMapManager.Size));
-        MapPanel.GetComponent<Image>().sprite = spr;
+        ApplyTexture(outTexture);
 
         worked(true);
         //Debug.Log("process END");
     }
 
-    private IEnumerator GetImage(GoogleMapPath path, int index, Action<ActionResults> action)
+    public void ApplyTexture(Texture2D texture)
+    {
+        var spr = Sprite.Create(texture, new Rect(0, 0, GMapManager.Size, GMapManager.Size), new Vector2(GMapManager.Size, GMapManager.Size));
+        MapPanel.GetComponent<Image>().sprite = spr;
+    }
+
+    public IEnumerator GetImage(GoogleMapPath path, int index, Action<ActionResults> action)
     {
         //Debug.Log("act=" + threadId + " BEGIN");
 
@@ -274,7 +295,7 @@ public class Manager : MonoBehaviour
         worked(true);
     }
 
-    private class ActionResults
+    public class ActionResults
     {
         public readonly int Index;
         public readonly Texture2D Texture;

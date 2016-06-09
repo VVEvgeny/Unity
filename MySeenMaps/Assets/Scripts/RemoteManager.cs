@@ -20,8 +20,9 @@ namespace Assets.Scripts
         }
         public IEnumerator GetUrl(string url, bool useProxy, Action<ReqAnswer> answer)
         {
-            if (useProxy) Request.proxy = new Uri(MySeenWebApi.Proxy);
-            else Request.proxy = null;
+            Request.proxy = useProxy ? new Uri(MySeenWebApi.Proxy) : null;
+
+            //Debug.Log("url=" + url);
 
             var req = new Request("GET", url, true);
             req.Send();
