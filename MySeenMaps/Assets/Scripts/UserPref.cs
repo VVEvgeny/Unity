@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class UserPref : MonoBehaviour
+namespace Assets.Scripts
 {
-    public static UserPref Instance;
-    public string UserKey
+    public static class UserPref
     {
-        get { return PlayerPrefs.GetString("UserKey"); }
-        set { PlayerPrefs.SetString("UserKey", value); }
-    }
+        public static string UserKey
+        {
+            get
+            {
+                if (!PlayerPrefs.HasKey("UserKey")) PlayerPrefs.SetString("UserKey", string.Empty);
+                return PlayerPrefs.GetString("UserKey");
+            }
+            set { PlayerPrefs.SetString("UserKey", value); }
+        }
 
-    public List<MySeenWebApi.SyncJsonData> Roads { get; set; }
-
-    private void Awake()
-    {
-        Instance = this;
-        if (!PlayerPrefs.HasKey("UserKey")) PlayerPrefs.SetString("UserKey",string.Empty);
+        public static List<MySeenWebApi.SyncJsonData> Roads { get; set; }
     }
 }
