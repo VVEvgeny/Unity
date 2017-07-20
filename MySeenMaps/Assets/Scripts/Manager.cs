@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts;
+using Assets.Scripts.Database;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +41,8 @@ public class Manager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(Starting());
+
+        Database.Get.ToString();
     }
 
     // ReSharper disable once UnusedMember.Local
